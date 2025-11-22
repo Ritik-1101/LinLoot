@@ -216,7 +216,7 @@ for py_cmd in python3 python python2; do
              echo -e "    Download it: https://raw.githubusercontent.com/unode/firefox_decrypt/main/firefox_decrypt.py"
         fi
         
-        break # Stop after finding one valid python version
+     # Stop after finding one valid python version
     fi
 done
 
