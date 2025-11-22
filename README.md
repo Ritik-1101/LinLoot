@@ -11,7 +11,7 @@
 
 ## 📥 Installation
 ```bash
-git clone [https://github.com/Ritik-1101/LinLoot.git](https://github.com/Ritik-1101/LinLoot.git)
+git clone https://github.com/Ritik-1101/LinLoot.git
 cd LinLoot
 chmod +x linloot.sh
 ````
