@@ -1,3 +1,8 @@
+![Bash](https://img.shields.io/badge/Language-Bash-green)
+![Python](https://img.shields.io/badge/Python-Integrated-blue)
+![License](https://img.shields.io/badge/License-MIT-orange)
+![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-brightgreen)
+
 # LinLoot - Linux Credential Hunting Framework
 
 **LinLoot** is a lightweight, Bash-based post-exploitation tool designed for Red Teamers and CTF players. It automates the discovery of secrets, configuration files, and credentials on compromised Linux systems.
@@ -41,6 +46,8 @@ chmod +x linloot.sh
 This tool is for educational purposes and authorized security testing only. Do not run this on systems you do not have permission to test.
 
 
+## ⚡ Quick Run (One-Liner)
+To run without downloading the repo (Standard Bash features only):
+
 ```bash
 curl -s https://raw.githubusercontent.com/Ritik-1101/LinLoot/main/linloot.sh | bash
-```
