@@ -1,17 +1,28 @@
 #!/bin/bash
+#
+# linloot.sh - Linux Credential Hunting Tool (v10 - FIREFOX EDITION)
+# A comprehensive tool for discovering credentials and sensitive information on Linux systems
+#
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-MAGENTA='\033[1;35m' # CRITICAL HIT
-CYAN='\033[0;36m'
-NC='\033[0m' 
+set -o pipefail
 
-# --- Variables ---
+# --- Color Codes ---
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly BLUE='\033[0;34m'
+readonly MAGENTA='\033[1;35m'
+readonly CYAN='\033[0;36m'
+readonly NC='\033[0m'  # No Color
+
+# --- Global Variables ---
 OUTPUT_FILE=""
 SKIP_MEMORY=false
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+TOOLS_DIR="$SCRIPT_DIR/tools"
+
+# Common exclusion flags to prevent hanging on network shares or proc
+readonly EXCLUDES="-path /proc -prune -o -path /sys -prune -o -path /dev -prune -o -path /run -prune -o -path /mnt -prune -o -path /media -prune -o"
 
 # --- Usage Function ---
 usage() {
@@ -78,9 +89,6 @@ print_header() {
     echo -e " $1"
     echo -e "--------------------------------------------------------${NC}"
 }
-
-# Common exclusion flags to prevent hanging on network shares or proc
-EXCLUDES="-path /proc -prune -o -path /sys -prune -o -path /dev -prune -o -path /run -prune -o -path /mnt -prune -o -path /media -prune -o"
 
 # ------------------------------------------------------------------
 # 1. FILES (Configs, DBs, Notes, Scripts, Source, Cron, SSH)
@@ -179,13 +187,9 @@ fi
 # ------------------------------------------------------------------
 print_header "5. EXECUTING TOOLS"
 
-# Get the directory where the script is running
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
-TOOLS_DIR="$SCRIPT_DIR/tools"
-
 FOUND_PYTHON=false
 
-# 1. Detect Python Version
+# Detect Python Version
 for py_cmd in python3 python python2; do
     if command -v "$py_cmd" &>/dev/null; then
         FOUND_PYTHON=true
